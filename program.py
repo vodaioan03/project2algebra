@@ -9,6 +9,11 @@ from colorama import Fore, Style
 import random
 import numpy as np
 import math
+import sympy
+import itertools
+import copy
+
+basis_corrent = []
 
 def valid(option_chosen:str):
     if option_chosen.isnumeric() and int(option_chosen) in [1,2,3]:
@@ -72,18 +77,10 @@ def generate_list(length:int):
   #This function generate the output!
   #Posible vector generates all posibile vectors in base Z2
   posible_vector = generate_posible_vector(length)
-  basis_list = []
-  new_length = length
-  posible_vector_l = len(posible_vector)
-  number_of = 1
-  #Calculate the number of basis and send to file
-  while new_length > 0:
-    number_of *= posible_vector_l
-    posible_vector_l -= 1
-    new_length -= 1
-  file_write(f"The number of bases of the vector space Z2{length}  over Z2 is {number_of} \n")
   #Generate all basis
-  generate_basis(posible_vector, 0,basis_list,length,0)
+  counter = generate_basis(posible_vector, 0,[],length,0)
+  file_write(f"The number of bases of the vector space Z2{length}  over Z2 is {counter} \n")
+  print_all_basis()
       
 def is_in_list(posible_list:list, elem:str):
   # This function verify if the elem is in basis list, and return True if is in list, else return False
@@ -103,11 +100,36 @@ def print_list(list_print:list,counter:int):
   file_write(f"{counter}. {string} \n")
   
 
+def transform_in_array(basis_list:list):
+  new_list = []
+  for i in basis_list:
+    new_list.append([])
+    for j in i:
+      new_list[-1].append(int(j))
+  return new_list
+
+def add_in_basis(basis_list:list):
+  #Adding in a list all correct basis
+  global basis_corrent
+  basis_corrent.append(copy.deepcopy(basis_list))
+
+def print_all_basis():
+  global basis_corrent
+  for i in range(len(basis_corrent)):
+    print_list(basis_corrent[i],i+1)
+
 def generate_basis(posible_vector:list, i:int,basis_list:list,length:int,counter:int):
   #This is a recursive function, he stop when basis_list is valid, length of basis list = length of n
   if len(basis_list) == length:
-    counter += 1
-    print_list(basis_list,counter)
+    new_list = transform_in_array(basis_list)
+    if length >= 2:
+      if np.linalg.det(new_list) != 0:
+        counter += 1
+        add_in_basis(basis_list)
+        #print_list(basis_list,counter)
+    else:
+      counter += 1
+      add_in_basis(basis_list)
     return counter
   elif len(basis_list) < length:
     # If isn't valid basis we are going further and put the next valid vector in basis.
@@ -161,7 +183,6 @@ def print_menu():
   print("1. Input natural number n.")
   print("2. Tests (0,1,2,3,4)")
   print("3. Exit")
-  
 def start():
   while True:
     print_menu()
@@ -173,4 +194,3 @@ def start():
 if __name__ == "__main__":
   start()
   pass
-
