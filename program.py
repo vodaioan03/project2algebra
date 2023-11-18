@@ -11,11 +11,12 @@ import numpy as np
 import math
 
 def valid(option_chosen:str):
-    if option_chosen.isnumeric() and int(option_chosen) in [1,2,3,4,5,6,7]:
+    if option_chosen.isnumeric() and int(option_chosen) in [1,2,3]:
         return True
     return False
   
 def add_number_in_base_2(number:int):
+  #This functio only add 1 in number and return that number
   number_list = []
   while number > 0:
     number_list.append(number%10)
@@ -45,12 +46,16 @@ def add_number_in_base_2(number:int):
       
 
 def generate_posible_vector(length:int):
+  #We need an initial number for stop
+  #I use a integer number bigger than the biggest vector because the vector can be (0,0,1) and i can't type an integer number who start with 0. But when i write the vectors i deleted 1 from in front
   number_initial = 10 ** length * 2
   last_num = 10 ** length
   list_of_vectors = []
   while last_num < number_initial :
+    #Here i generate all vector by adding 1 in base 2, because 1+1 = 10 in base 2
     last_num = add_number_in_base_2(last_num)
     list_of_vectors.append(str(last_num)[1::])
+  #I delete the last element because isn't valid
   list_of_vectors.pop()
   return list_of_vectors
 
@@ -64,19 +69,24 @@ def choose_option():
         print(Fore.RED + "ERROR: " + str(e) + Style.RESET_ALL)
 
 def generate_list(length:int):
+  #This function generate the output!
+  #Posible vector generates all posibile vectors in base Z2
   posible_vector = generate_posible_vector(length)
   basis_list = []
   new_length = length
   posible_vector_l = len(posible_vector)
   number_of = 1
+  #Calculate the number of basis and send to file
   while new_length > 0:
     number_of *= posible_vector_l
     posible_vector_l -= 1
     new_length -= 1
+  file_write(f"The number of bases of the vector space Z2{length}  over Z2 is {number_of} \n")
+  #Generate all basis
   generate_basis(posible_vector, 0,basis_list,length,0)
-  print(f"The number of bases of the vector space Z2{length}  over Z2 is {number_of}")
       
 def is_in_list(posible_list:list, elem:str):
+  # This function verify if the elem is in basis list, and return True if is in list, else return False
   for i in posible_list:
     if i == elem:
       return False
@@ -90,15 +100,18 @@ def print_list(list_print:list,counter:int):
       string = string + j +','
     string = string[:-1] + '),'
   string = string[:-1]+')'
-  print(f"{counter}. {string}")
+  file_write(f"{counter}. {string} \n")
   
 
 def generate_basis(posible_vector:list, i:int,basis_list:list,length:int,counter:int):
+  #This is a recursive function, he stop when basis_list is valid, length of basis list = length of n
   if len(basis_list) == length:
     counter += 1
     print_list(basis_list,counter)
     return counter
   elif len(basis_list) < length:
+    # If isn't valid basis we are going further and put the next valid vector in basis.
+    # Here are generated all basis in recusrive way
     for j in range(len(posible_vector)):
       if not is_in_list(basis_list,posible_vector[j]):
         continue
@@ -107,6 +120,11 @@ def generate_basis(posible_vector:list, i:int,basis_list:list,length:int,counter
       basis_list.pop()
   return counter
 
+def file_write(text:str):
+  file = open("inpout.txt","a")
+  file.write(text)
+  file.close
+
 def input_list():
   natural_number = input("Type a natural number: ").strip()
   if not natural_number.isnumeric():
@@ -114,9 +132,12 @@ def input_list():
   natural_number = int(natural_number)
   if natural_number <= 0:
     raise ValueError("You doesen't write a natural number!")
+  file_write(f"Input: n = {natural_number} \n")
+  file_write(f"Output: ")
   generate_list(natural_number)
 
 def tests():
+  #We generate all list for number 0,1,2,3,4
   generate_list(int(0))
   generate_list(int(1))
   generate_list(int(2))
@@ -124,6 +145,7 @@ def tests():
   generate_list(int(4))
 
 def option_proceed(option_choosen:int):
+  #In this function we proeed the option for quit, tests and for input!
   if option_choosen == 3:
     quit()
   if option_choosen == 2:
