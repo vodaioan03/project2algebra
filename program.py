@@ -111,7 +111,8 @@ def transform_in_array(basis_list:list):
 def add_in_basis(basis_list:list):
   #Adding in a list all correct basis
   global basis_corrent
-  basis_corrent.append(copy.deepcopy(basis_list))
+  if not basis_list in basis_corrent:
+    basis_corrent.append(copy.deepcopy(basis_list))
 
 def print_all_basis():
   global basis_corrent
@@ -123,7 +124,7 @@ def generate_basis(posible_vector:list, i:int,basis_list:list,length:int,counter
   if len(basis_list) == length:
     new_list = transform_in_array(basis_list)
     if length >= 2:
-      if np.linalg.det(new_list) != 0:
+      if np.linalg.det(new_list) % 2 !=0:
         counter += 1
         add_in_basis(basis_list)
     else:
