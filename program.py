@@ -126,7 +126,6 @@ def generate_basis(posible_vector:list, i:int,basis_list:list,length:int,counter
       if np.linalg.det(new_list) != 0:
         counter += 1
         add_in_basis(basis_list)
-        #print_list(basis_list,counter)
     else:
       counter += 1
       add_in_basis(basis_list)
@@ -156,6 +155,8 @@ def input_list():
     raise ValueError("You doesen't write a natural number!")
   file_write(f"Input: n = {natural_number} \n")
   file_write(f"Output: ")
+  global basis_corrent
+  basis_corrent = []
   generate_list(natural_number)
 
 def tests():
